@@ -30,6 +30,48 @@ public class MCrypt {
     }
 
     public static void setKeys() {
+        //byte[] iv = Base64.decode(Open(ivFilename), Base64.DEFAULT);
+        /*
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            if (!keyStore.containsAlias(KEY_ALIAS)) {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+
+                keyGenerator.init(new KeyGenParameterSpec.Builder(KEY_ALIAS,
+                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                        .build());
+
+                return keyGenerator.generateKey();
+            } else {
+                System.out.println(keyStore.getKey(KEY_ALIAS, null).toString());
+                return keyStore.getKey(KEY_ALIAS, null);
+            }
+        }
+        catch (KeyStoreException e) {
+            Toast.makeText(this, "KEY STORE EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (CertificateException e) {
+            Toast.makeText(this, "CERTIFICATE EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (IOException e) {
+            Toast.makeText(this, "IO EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (NoSuchAlgorithmException e) {
+            Toast.makeText(this, "NO SUCH ALGORITHM EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (NoSuchProviderException e) {
+            Toast.makeText(this, "NO SUCH PROVIDER EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (InvalidAlgorithmParameterException e) {
+            Toast.makeText(this, "INVALID ALGORITHM EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (UnrecoverableKeyException e) {
+            Toast.makeText(this, "UNRECOVERABLE KEY EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+         */
         iv = MainActivity.hashKey.substring(5,21);
         SecretKey = MainActivity.hashKey.substring(22,38);
         ivspec = new IvParameterSpec(iv.getBytes());
