@@ -73,7 +73,7 @@ public class MCrypt {
         }
          */
         iv = MainActivity.hashKey.substring(5,21);
-        SecretKey = MainActivity.hashKey.substring(22,38);
+        //SecretKey = MainActivity.aesKey;
         ivspec = new IvParameterSpec(iv.getBytes());
         keyspec = new SecretKeySpec(SecretKey.getBytes(), "AES");
     }
@@ -85,7 +85,7 @@ public class MCrypt {
 
         byte[] encrypted = null;
         try {
-            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
+            cipher.init(Cipher.ENCRYPT_MODE, MainActivity.aesKey, ivspec);
 
             encrypted = cipher.doFinal(padString(text).getBytes());
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class MCrypt {
 
         byte[] decrypted = null;
         try {
-            cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
+            cipher.init(Cipher.DECRYPT_MODE, MainActivity.aesKey, ivspec);
 
             decrypted = cipher.doFinal(hexToBytes(text));
         } catch (Exception e) {

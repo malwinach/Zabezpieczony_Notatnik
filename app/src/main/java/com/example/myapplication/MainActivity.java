@@ -2,23 +2,42 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import javax.crypto.KeyGenerator;
+
 public class MainActivity extends AppCompatActivity {
 
     public static String hashKey;
+    public static Key aesKey;
     public SharedPreferences mSharedPreferences;
     MCrypt mCrypt = new MCrypt();
+    public static String KEY_ALIAS = "kluczyk";
 
     public MainActivity() {
     }
@@ -50,10 +69,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onResume() {
         super.onResume();
         if(hashKey != null) {
+            aesKey = genereteOrGetKey();
             TextView notebook = (TextView) findViewById(R.id.notebook);
             String encryptedStr = getSharedPreferences("notebook", 0).getString("NotebookContent", "");
             try {
@@ -105,6 +126,51 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private Key genereteOrGetKey() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            if (!keyStore.containsAlias(KEY_ALIAS)) {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+
+                keyGenerator.init(new KeyGenParameterSpec.Builder(KEY_ALIAS,
+                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                        .build());
+
+                return keyGenerator.generateKey();
+            } else {
+                System.out.println(keyStore.getKey(KEY_ALIAS, null).toString());
+                return keyStore.getKey(KEY_ALIAS, null);
+            }
+        }
+        catch (KeyStoreException e) {
+            Toast.makeText(this, "KEY STORE EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (CertificateException e) {
+            Toast.makeText(this, "CERTIFICATE EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (IOException e) {
+            Toast.makeText(this, "IO EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (NoSuchAlgorithmException e) {
+            Toast.makeText(this, "NO SUCH ALGORITHM EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (NoSuchProviderException e) {
+            Toast.makeText(this, "NO SUCH PROVIDER EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (InvalidAlgorithmParameterException e) {
+            Toast.makeText(this, "INVALID ALGORITHM EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+        catch (UnrecoverableKeyException e) {
+            Toast.makeText(this, "UNRECOVERABLE KEY EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
+
+        return null;
     }
 
     public void go(View view) {
