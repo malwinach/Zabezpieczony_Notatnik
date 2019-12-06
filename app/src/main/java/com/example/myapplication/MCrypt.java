@@ -13,14 +13,14 @@ public class MCrypt {
     private static String iv;
     private static String SecretKey;
     private static IvParameterSpec ivspec;
-    public static SecretKeySpec keyspec;
+    private static SecretKeySpec keyspec;
     private static Cipher cipher;
 
 
     public MCrypt() {
 
         try {
-            cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -73,7 +73,7 @@ public class MCrypt {
         }
          */
         iv = MainActivity.hashKey.substring(5,21);
-        SecretKey = MainActivity.hashKey.substring(22,38);
+        SecretKey =  MainActivity.hashKey.substring(6,38);
         ivspec = new IvParameterSpec(iv.getBytes());
         keyspec = new SecretKeySpec(SecretKey.getBytes(), "AES");
     }

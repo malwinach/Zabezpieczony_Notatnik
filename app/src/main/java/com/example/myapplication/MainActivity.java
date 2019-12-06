@@ -74,12 +74,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if(hashKey != null) {
-            aesKey = generateOrGetKey();
+            aesKey = genereteOrGetKey();
             TextView notebook = (TextView) findViewById(R.id.notebook);
             String encryptedStr = getSharedPreferences("notebook", 0).getString("NotebookContent", "");
             try {
-                //String decryptedNote = mCrypt.HexToASCII(mCrypt.byteArrayToHexString(mCrypt.decrypt(encryptedStr)));
-                String decryptedNote = aesKey.toString() + "keyspec" + MCrypt.keyspec.toString();
+                String decryptedNote = mCrypt.HexToASCII(mCrypt.byteArrayToHexString(mCrypt.decrypt(encryptedStr)));
                 notebook.setText(decryptedNote);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private Key generateOrGetKey() {
+    private Key genereteOrGetKey() {
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
@@ -139,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
 
                 keyGenerator.init(new KeyGenParameterSpec.Builder(KEY_ALIAS,
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                        .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                         .build());
 
                 return keyGenerator.generateKey();
